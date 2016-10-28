@@ -16,7 +16,7 @@ public class Contact implements Parcelable {
         this.name = name;
     }
 
-    protected Contact(Parcel in) {
+    public Contact(Parcel in) {
         name = in.readString();
         number = in.readString();
     }
@@ -57,8 +57,5 @@ public class Contact implements Parcelable {
         return number;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
 
 }

@@ -1,7 +1,6 @@
 package com.example.elvira.contacts_frag;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +11,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,19 +20,19 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 
-public class ContactsList extends AppCompatActivity implements OnItemClick {
+public class ContactsList extends AppCompatActivity implements IntClick {
 
     //private static final int PICK_RESULT = 10;
     private FrameLayout mFrameLayout;
     private RecyclerView mRecyclerView;
-    private ContactsRecyclerAdapter mRecyclerAdapter;
+    private ContactsAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private ArrayList<Contact> mContacts;
-    private ArrayList<Contact> mDelContacts;
+    private ArrayList<Contact> mDelete;
     private boolean isPortOrient;
 
-    Button delete;
+
 
 
     @Override
@@ -51,12 +49,30 @@ public class ContactsList extends AppCompatActivity implements OnItemClick {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mDelContacts = new ArrayList<>();
-        createContact();
+
+        /*
+        Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        pickIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
+        startActivityForResult(pickIntent, PICK_RESULT);*/
 
 
-        mRecyclerAdapter = new ContactsRecyclerAdapter(ContactsList.this, mContacts, this, false);
-        mRecyclerView.setAdapter(mRecyclerAdapter);
+        mContacts = new ArrayList<>();
+        mContacts.add(new Contact("89176431355", "Мамочка"));
+        mContacts.add(new Contact("89124546555", "Папуля"));
+        mContacts.add(new Contact("89656423423", "Абый"));
+        mContacts.add(new Contact("89464366246", "Айгуль"));
+        mContacts.add(new Contact("89546578654", "Лиля"));
+        mContacts.add(new Contact("89823546768", "Апам"));
+        mContacts.add(new Contact("89234365768", "Бабуля"));
+        mContacts.add(new Contact("89877654456", "Дедуля"));
+        mContacts.add(new Contact("89871327683", "Дэу Эни"));
+        mContacts.add(new Contact("89874364362", "Дэу абый"));
+        mContacts.add(new Contact("89145674668", "Дэу апа"));
+        mContacts.add(new Contact("89453423645", "Тетя"));
+        mDelete = new ArrayList<>();
+
+        mAdapter = new ContactsAdapter(ContactsList.this, mContacts, this, false);
+        mRecyclerView.setAdapter(mAdapter);
 
         isPortOrient = isPort();
 
@@ -84,27 +100,6 @@ public class ContactsList extends AppCompatActivity implements OnItemClick {
             return false;
     }
 
-    public void createContact() {
-/*
-        Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        pickIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
-        startActivityForResult(pickIntent, PICK_RESULT);*/
-
-
-        mContacts = new ArrayList<>();
-        mContacts.add(new Contact("89176431355", "Мамочка"));
-        mContacts.add(new Contact("89124546555", "Папуля"));
-        mContacts.add(new Contact("89656423423", "Абый"));
-        mContacts.add(new Contact("89464366246", "Айгуль"));
-        mContacts.add(new Contact("89546578654", "Лиля"));
-        mContacts.add(new Contact("89823546768", "Апам"));
-        mContacts.add(new Contact("89234365768", "Бабуля"));
-        mContacts.add(new Contact("89877654456", "Дедуля"));
-        mContacts.add(new Contact("89871327683", "Дэу Эни"));
-        mContacts.add(new Contact("89874364362", "Дэу абый"));
-        mContacts.add(new Contact("89145674668", "Дэу апа"));
-        mContacts.add(new Contact("89453423645", "Тетя"));
-}
 
     @Override
     public void onItemClick(Contact contact) {
@@ -122,12 +117,12 @@ public class ContactsList extends AppCompatActivity implements OnItemClick {
 
     @Override
     public void deleteContact(Contact contact) {
-        mDelContacts.add(contact);
+        mDelete.add(contact);
 
 
         RemovesFragment removesFragment = new RemovesFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("contacts", mDelContacts);
+        bundle.putParcelableArrayList("contacts", mDelete);
         removesFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, removesFragment, DetailsFragment.class.getSimpleName()).commit();
         if (isPortOrient) {
@@ -137,13 +132,13 @@ public class ContactsList extends AppCompatActivity implements OnItemClick {
     }
 }
 
-class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecyclerAdapter.ViewHolder> {
+class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
     private ArrayList<Contact> contacts;
     public Context context;
-    public OnItemClick click;
+    public IntClick click;
     public boolean isRemoved;
 
-    public ContactsRecyclerAdapter(Context context, ArrayList<Contact> contacts, OnItemClick listener, boolean isRemoved){
+    public ContactsAdapter(Context context, ArrayList<Contact> contacts, IntClick listener, boolean isRemoved){
         this.contacts = contacts;
         this.context = context;
         click = listener;
@@ -201,6 +196,7 @@ class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecyclerAdapt
 
     @Override
     public int getItemCount() {
+
         return contacts.size();
     }
 
